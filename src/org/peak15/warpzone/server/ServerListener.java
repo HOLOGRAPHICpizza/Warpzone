@@ -52,6 +52,7 @@ public class ServerListener extends Listener {
 			NetworkStuff.print(name + " has joined the game.");
 			
 			// Send map to client.
+			//TODO: The map server will obsolete this.
 			NetMap nmap = new NetMap(Shared.map);
 			connection.sendTCP(nmap);
 		}

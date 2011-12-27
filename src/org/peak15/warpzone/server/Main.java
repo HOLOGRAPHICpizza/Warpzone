@@ -33,6 +33,11 @@ public class Main {
 			System.exit(1);
 		}
 		NetworkStuff.print("Listening on TCP port " + NetworkStuff.TCP_PORT + " and UDP port " + NetworkStuff.UDP_PORT + ".");
+		
+		// Start map server.
+		NetMap nmap = new NetMap(Shared.map);
+		NetworkStuff.print("Non-blocking! ;D");
+		NetworkStuff.print(nmap.getName());
 	}
 
 }

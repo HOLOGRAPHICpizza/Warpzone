@@ -59,8 +59,10 @@ public class Main extends Applet {
 		}
 		
 		// Send Join Request TODO: Ship Selection
-		// Server will create and send back player object, map, and game state.
+		// Server will create and send back player objects.
 		Shared.client.sendTCP(new JoinRequest(name, new DefaultShip()));
+		
+		//TODO: Get map from map server and start graphics.
 		
 		// Start Main Loop
 		ClientLoop cl = new ClientLoop();

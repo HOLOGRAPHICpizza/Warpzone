@@ -30,6 +30,7 @@ public class ClientListener extends Listener {
 		}
 		
 		// Map received from server
+		//TODO: The map server will obsolete this.
 		else if(object instanceof NetMap) {
 			NetMap nmap = (NetMap) object;
 			Shared.map = nmap.getMap();
