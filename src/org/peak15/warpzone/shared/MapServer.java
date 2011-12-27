@@ -33,7 +33,7 @@ public class MapServer {
 		ssc.configureBlocking(false);
 		
 		// Bind to local host and port.
-		InetAddress lh = InetAddress.getLocalHost();
+		InetAddress lh = Shared.server.getInetSocket().getAddress();
 		InetSocketAddress isa = new InetSocketAddress(lh, NetworkStuff.MAP_PORT);
 		ssc.socket().bind(isa);
 		
