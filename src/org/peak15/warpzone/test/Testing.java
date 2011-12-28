@@ -1,23 +1,20 @@
 package org.peak15.warpzone.test;
 
+import org.peak15.warpzone.client.Shared;
 import org.peak15.warpzone.shared.*;
+import java.net.InetAddress;
 
 public class Testing {
 
 	public static void main(String[] args) {
-		NetworkStuff.setServer();
+		NetworkStuff.setClient();
+		NetworkStuff.register(Shared.client);
 		
-		Map map = null;
 		try {
-			map = new Map("test");
-		} catch (MapException e) {
+			new NetMap(InetAddress.getByName("localhost"));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		// This should start map server.
-		NetMap nmap = new NetMap(map);
-		NetworkStuff.print("Non-blocking! ;D");
-		NetworkStuff.print(nmap.getName());
 	}
 
 }

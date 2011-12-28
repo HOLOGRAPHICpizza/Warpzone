@@ -28,14 +28,5 @@ public class ClientListener extends Listener {
 			
 			NetworkStuff.print(player.getName() + " has joined the game.");
 		}
-		
-		// Map received from server
-		//TODO: The map server will obsolete this.
-		else if(object instanceof NetMap) {
-			NetMap nmap = (NetMap) object;
-			Shared.map = nmap.getMap();
-			Shared.main.startGraphics();
-			NetworkStuff.print("Map \"" + nmap.getName() + "\" received from server.");
-		}
 	}
 }

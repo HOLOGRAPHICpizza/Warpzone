@@ -20,10 +20,8 @@ public class Shared {
 	public static HashMap<Byte, Player> players = new HashMap<Byte, Player>();
 	public static Player ply = null; // Local player.
 	
-	public static Map map = null;
-	
 	private static Color statusColor = Color.WHITE;
-	private static String status = ""; 
+	private static String status = "";
 	
 	public static Color getStatusColor() {
 		return statusColor;

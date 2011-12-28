@@ -9,16 +9,26 @@ import java.awt.Image;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import org.peak15.warpzone.shared.*;
 
 import org.peak15.warpzone.shared.NetworkStuff;
 
 public class Resources implements Runnable {
-	private final String CONTENT_SERVER = "http://www.peak15.org.nyud.net/warpzone/content/";
+	private java.util.Map<String, Image> images = new HashMap<String, Image>();
+	private Map map = null;
 	
-	private Map<String, Image> images = new HashMap<String, Image>();
-	Set<String> downloading = new HashSet<String>();
+	private Set<String> downloading = new HashSet<String>();
+	
+	/*public Resources() {
+		// Download from content server by default
+		boolean download = true;
+		
+		// check if local cache exists
+		File cacheDir =
+		
+		// compare serial on content server to serial in local cache
+	}*/
 	
 	// Begin downloading crap
 	@Override
@@ -28,6 +38,11 @@ public class Resources implements Runnable {
 		getImage("ships/default.png");
 	}
 	
+	/**
+	 * Retrieves an image from (in order of preference) memory, local cache, or content server.
+	 * @param filename Image to retrieve.
+	 * @return Image retrieved.
+	 */
 	public Image getImage(String filename) {
 		// This has been downloaded.
 		if(images.containsKey(filename) && images.get(filename) != null) {
@@ -52,7 +67,7 @@ public class Resources implements Runnable {
 				// download it
 				try {
 					NetworkStuff.printDbg("Dowloading " + filename);
-					Image img = javax.imageio.ImageIO.read(new URL(CONTENT_SERVER + filename));
+					Image img = javax.imageio.ImageIO.read(new URL(NetworkStuff.CONTENT_SERVER + filename));
 					images.put(filename, img);
 					downloading.remove(filename);
 					return img;
@@ -60,6 +75,51 @@ public class Resources implements Runnable {
 					NetworkStuff.printErr("Failed to grab " + filename + " from content server.");
 					e.printStackTrace();
 					downloading.remove(filename);
+					return null;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Retrieves the map from (in order of preference) memory, local cache, or content server.
+	 * @param filename Image to retrieve.
+	 * @return Image retrieved.
+	 */
+	public Map getMap() {
+		// This has been downloaded.
+		if(map != null) {
+			return map;
+		}
+		else {
+			// Is it currently downloading?
+			if(downloading.contains("MAP")) {
+				// Wait for it to finish
+				while(downloading.contains("MAP")) {
+					// Sleep a bit
+					try {
+						Thread.sleep(10);
+					}
+					catch(InterruptedException e) {}
+				}
+				return getMap();
+			}
+			else {
+				downloading.add("MAP");
+				
+				// download it
+				try {
+					NetworkStuff.printDbg("Dowloading map...");
+					
+					NetMap nmap = new NetMap(Shared.client.getRemoteAddressTCP().getAddress());
+					this.map = nmap.getMap();
+					
+					downloading.remove("MAP");
+					return map;
+				} catch (Exception e) {
+					NetworkStuff.printErr("Failed to grab map from server.");
+					e.printStackTrace();
+					downloading.remove("MAP");
 					return null;
 				}
 			}

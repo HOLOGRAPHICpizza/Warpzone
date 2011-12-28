@@ -62,14 +62,15 @@ public class Main extends Applet {
 		// Server will create and send back player objects.
 		Shared.client.sendTCP(new JoinRequest(name, new DefaultShip()));
 		
-		//TODO: Get map from map server and start graphics.
-		
 		// Start Main Loop
 		ClientLoop cl = new ClientLoop();
 		// Hook up keyboard polling
 		addKeyListener(cl.keyboard);
 		Thread t = new Thread(cl);
 		t.start();
+		
+		// start graphics.
+		Shared.main.startGraphics();
 	}
 	
 	public void startGraphics() {
