@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.peak15.warpzone.shared.*;
 
-import org.peak15.warpzone.shared.NetworkStuff;
+import org.peak15.warpzone.shared.Global;
 
 public class Resources implements Runnable {
 	private java.util.Map<String, Image> images = new HashMap<String, Image>();
@@ -26,49 +26,49 @@ public class Resources implements Runnable {
 	public Resources() {
 		try {
 			// check if local cache exists
-			if(NetworkStuff.CACHE_DIR.exists()) {
+			if(Global.CACHE_DIR.exists()) {
 				// compare serial on content server to serial in local cache
-				File serial = new File(NetworkStuff.CACHE_DIR, "serial");
+				File serial = new File(Global.CACHE_DIR, "serial");
 				if(serial.exists()) {
 					BufferedReader localIn = new BufferedReader(new InputStreamReader(new FileInputStream(serial)));
 					String localSerial = localIn.readLine();
 					localIn.close();
 					
-					URL serialUrl = new URL(NetworkStuff.getContentServer() + "serial");
+					URL serialUrl = new URL(Global.getContentServer() + "serial");
 					BufferedReader remoteIn = new BufferedReader(new InputStreamReader(serialUrl.openStream()));
 					String remoteSerial = remoteIn.readLine();
 					remoteIn.close();
 					
-					NetworkStuff.printDbg("Local content serial: " + localSerial);
-					NetworkStuff.printDbg("Remote content serial: " + remoteSerial);
+					Global.printDbg("Local content serial: " + localSerial);
+					Global.printDbg("Remote content serial: " + remoteSerial);
 					
 					if(localSerial != null && remoteSerial != null && localSerial.equals(remoteSerial)) {
 						// This is the only case where we can say the cache is current.
 						cacheIsCurrent = true;
-						NetworkStuff.print("Local cache is up to date, prefering it to content server...");
+						Global.print("Local cache is up to date, prefering it to content server...");
 						return;
 					}
 				}
 			}
 			
 			// Create local cache dir if it does not exist
-			if(!NetworkStuff.CACHE_DIR.exists()) {
-				NetworkStuff.CACHE_DIR.mkdir();
+			if(!Global.CACHE_DIR.exists()) {
+				Global.CACHE_DIR.mkdir();
 			}
 			
 			// Overwrite or create local serial file
-			URL serialUrl = new URL(NetworkStuff.getContentServer() + "serial");
+			URL serialUrl = new URL(Global.getContentServer() + "serial");
 			BufferedReader remoteIn = new BufferedReader(new InputStreamReader(serialUrl.openStream()));
 			String remoteSerial = remoteIn.readLine();
 			remoteIn.close();
 			
-			File serial = new File(NetworkStuff.CACHE_DIR, "serial");
+			File serial = new File(Global.CACHE_DIR, "serial");
 			BufferedWriter serialOut = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(serial)));
 			serialOut.write(remoteSerial);
 			serialOut.close();
 			
 		} catch(Exception e) {
-			NetworkStuff.printErr("Failed to start resource handler!");
+			Global.printErr("Failed to start resource handler!");
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -77,7 +77,7 @@ public class Resources implements Runnable {
 	// Begin downloading crap
 	@Override
 	public void run() {
-		NetworkStuff.printDbg("Begining background downloads.");
+		Global.printDbg("Begining background downloads.");
 		getImage("background.png");
 		getImage("ships/default.png");
 	}
@@ -111,13 +111,13 @@ public class Resources implements Runnable {
 			downloading.add(filename);
 			
 			try {
-				NetworkStuff.printDbg("Grabbing " + filename + " from local cache.");
-				Image img = javax.imageio.ImageIO.read(new File(NetworkStuff.CACHE_DIR, filename));
+				Global.printDbg("Grabbing " + filename + " from local cache.");
+				Image img = javax.imageio.ImageIO.read(new File(Global.CACHE_DIR, filename));
 				images.put(filename, img);
 				downloading.remove(filename);
 				return img;
 			} catch (Exception e) {
-				NetworkStuff.printErr("Failed to grab " + filename + " from local cache.");
+				Global.printErr("Failed to grab " + filename + " from local cache.");
 				e.printStackTrace();
 				downloading.remove(filename);
 				return null;
@@ -129,13 +129,13 @@ public class Resources implements Runnable {
 			downloading.add(filename);
 			
 			try {
-				NetworkStuff.printDbg("Dowloading " + filename);
-				Image img = javax.imageio.ImageIO.read(new URL(NetworkStuff.getContentServer() + filename));
+				Global.printDbg("Dowloading " + filename);
+				Image img = javax.imageio.ImageIO.read(new URL(Global.getContentServer() + filename));
 				images.put(filename, img);
 				downloading.remove(filename);
 				
 				// Save to local cache
-				File cacheFile = new File(NetworkStuff.CACHE_DIR, filename);
+				File cacheFile = new File(Global.CACHE_DIR, filename);
 				if(!cacheFile.getParentFile().exists()) {
 					// create parent dir if it does not exist
 					cacheFile.getParentFile().mkdirs();
@@ -144,7 +144,7 @@ public class Resources implements Runnable {
 				
 				return img;
 			} catch (Exception e) {
-				NetworkStuff.printErr("Failed to grab " + filename + " from content server.");
+				Global.printErr("Failed to grab " + filename + " from content server.");
 				e.printStackTrace();
 				downloading.remove(filename);
 				return null;
@@ -153,7 +153,7 @@ public class Resources implements Runnable {
 	}
 	
 	private boolean isInCache(String filename) {
-		File file = new File(NetworkStuff.CACHE_DIR, filename);
+		File file = new File(Global.CACHE_DIR, filename);
 		return file.exists();
 	}
 	
@@ -185,7 +185,7 @@ public class Resources implements Runnable {
 				
 				// download it
 				try {
-					NetworkStuff.printDbg("Dowloading map...");
+					Global.printDbg("Dowloading map...");
 					
 					NetMap nmap = new NetMap(Shared.client.getRemoteAddressTCP().getAddress());
 					this.map = nmap.getMap();
@@ -193,7 +193,7 @@ public class Resources implements Runnable {
 					downloading.remove("MAP");
 					return map;
 				} catch (Exception e) {
-					NetworkStuff.printErr("Failed to grab map from server.");
+					Global.printErr("Failed to grab map from server.");
 					e.printStackTrace();
 					downloading.remove("MAP");
 					return null;

@@ -13,12 +13,12 @@ public class Player {
 	private int score = 0;
 	private int angle = 0;
 
-	public static final int SIZE = NetworkStuff.TILE_SIZE * 2; // width and height of all players
+	public static final int SIZE = Global.TILE_SIZE * 2; // width and height of all players
 	
 	public Player() {}
 	
 	public Player(String name, byte LID) {
-		this(name, LID, NetworkStuff.CENTER, new DefaultShip());
+		this(name, LID, Global.CENTER, new DefaultShip());
 	}
 	
 	public Player(String name, byte LID, Vector pos, Ship ship) {

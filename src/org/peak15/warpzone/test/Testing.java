@@ -7,8 +7,8 @@ import java.net.InetAddress;
 public class Testing {
 
 	public static void main(String[] args) {
-		NetworkStuff.setClient();
-		NetworkStuff.register(Shared.client);
+		Global.setClient();
+		Global.register(Shared.client);
 		
 		try {
 			new NetMap(InetAddress.getByName("localhost"));

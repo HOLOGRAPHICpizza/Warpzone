@@ -12,7 +12,7 @@ public class ServerListener extends Listener {
 		if(object instanceof String) {
 			String str = (String) object;
 			connection.sendTCP(str);
-			NetworkStuff.printDbg("Echoed: " + str);
+			Global.printDbg("Echoed: " + str);
 		}
 		
 		// Player Joining
@@ -21,7 +21,7 @@ public class ServerListener extends Listener {
 			
 			// Make sure security matches.
 			if(Shared.secure != req.secure) {
-				NetworkStuff.printErr("Secuity mismatch on join request from " + connection.getRemoteAddressTCP().toString());
+				Global.printErr("Secuity mismatch on join request from " + connection.getRemoteAddressTCP().toString());
 				return;
 			}
 			
@@ -49,7 +49,7 @@ public class ServerListener extends Listener {
 			// Add player to list
 			Shared.players.put(ply.getLID(), ply);
 			
-			NetworkStuff.print(name + " has joined the game.");
+			Global.print(name + " has joined the game.");
 		}
 	}
 }

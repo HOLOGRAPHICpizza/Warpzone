@@ -13,7 +13,7 @@ public class ClientListener extends Listener {
 		// Echo Strings
 		if(object instanceof String) {
 			String str = (String) object;
-			NetworkStuff.print("Received: " + str);
+			Global.print("Received: " + str);
 		}
 		
 		// Player has joined the game.
@@ -26,7 +26,7 @@ public class ClientListener extends Listener {
 			
 			Shared.players.put(player.getLID(), player);
 			
-			NetworkStuff.print(player.getName() + " has joined the game.");
+			Global.print(player.getName() + " has joined the game.");
 		}
 	}
 }

@@ -8,13 +8,13 @@ import com.esotericsoftware.minlog.Log;
 public class Main {
 	
 	public static void main(String[] args) {
-		NetworkStuff.setServer();
+		Global.setServer();
 		
-		if(NetworkStuff.DEBUG) {
+		if(Global.DEBUG) {
 			Log.set(Log.LEVEL_DEBUG);
 		}
 		
-		NetworkStuff.print("Warpzone server starting...");
+		Global.print("Warpzone server starting...");
 		
 		// Generate and / or Load Map
 		// TODO: Choose Map
@@ -26,23 +26,23 @@ public class Main {
 		}
 		
 		// Initialize KryoNet
-		NetworkStuff.register(Shared.server);
+		Global.register(Shared.server);
 		Shared.server.addListener(new ServerListener());
 		Shared.server.start();
 		
 		// Bind to Port
 		try {
-			Shared.server.bind(NetworkStuff.TCP_PORT, NetworkStuff.UDP_PORT);
+			Shared.server.bind(Global.TCP_PORT, Global.UDP_PORT);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		NetworkStuff.print("Listening on TCP port " + NetworkStuff.TCP_PORT + " and UDP port " + NetworkStuff.UDP_PORT + ".");
+		Global.print("Listening on TCP port " + Global.TCP_PORT + " and UDP port " + Global.UDP_PORT + ".");
 		
 		// Start map server.
 		new NetMap(Shared.map);
-		NetworkStuff.print("Map server started on TCP port " + NetworkStuff.MAP_PORT + ".");
+		Global.print("Map server started on TCP port " + Global.MAP_PORT + ".");
 	}
 
 }

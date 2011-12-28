@@ -28,23 +28,23 @@ public class Drawing {
 			
 			// Draw ship
 			g.drawImage(newShip,
-					(int) NetworkStuff.CENTER.x - Player.SIZE/2,
-					(int) NetworkStuff.CENTER.y - Player.SIZE/2,
+					(int) Global.CENTER.x - Player.SIZE/2,
+					(int) Global.CENTER.y - Player.SIZE/2,
 					Shared.main);
 			
 			g.setColor(Color.WHITE);
 			g.drawString(ply.getName(),
-					(int) NetworkStuff.CENTER.x - Player.SIZE/2, 
-					(int) NetworkStuff.CENTER.y - Player.SIZE/2 - 20); // Draw name 20 px above player.
+					(int) Global.CENTER.x - Player.SIZE/2, 
+					(int) Global.CENTER.y - Player.SIZE/2 - 20); // Draw name 20 px above player.
 			g.drawString(Integer.toString(ply.getScore()),
-					(int) NetworkStuff.CENTER.x - Player.SIZE/2,
-					(int) NetworkStuff.CENTER.y - Player.SIZE/2 - 5); // Draw score 5 px above player.
+					(int) Global.CENTER.x - Player.SIZE/2,
+					(int) Global.CENTER.y - Player.SIZE/2 - 5); // Draw score 5 px above player.
 			
 			// Debug Text
 			g.setColor(Color.CYAN);
 			g.drawString(Integer.toString(ply.getAngle()),
-					(int) NetworkStuff.CENTER.x + Player.SIZE/2 + 5,
-					(int) NetworkStuff.CENTER.y);
+					(int) Global.CENTER.x + Player.SIZE/2 + 5,
+					(int) Global.CENTER.y);
 		}
 	}
 }

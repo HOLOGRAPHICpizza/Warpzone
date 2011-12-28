@@ -18,11 +18,11 @@ public class Main extends Applet {
 	private Graphics dbg;
 	
 	public void init() {
-		NetworkStuff.setClient();
+		Global.setClient();
 		Shared.main = this;
-		this.setSize(NetworkStuff.WIDTH, NetworkStuff.HEIGHT);
+		this.setSize(Global.WIDTH, Global.HEIGHT);
 		
-		if(NetworkStuff.DEBUG) {
+		if(Global.DEBUG) {
 			Log.set(Log.LEVEL_DEBUG);
 		}
 		
@@ -31,7 +31,7 @@ public class Main extends Applet {
 		d.start();
 		
 		// Initialize KryoNet
-		NetworkStuff.register(Shared.client);
+		Global.register(Shared.client);
 		Shared.client.addListener(new ClientListener());
 		Shared.client.start();
 		
@@ -52,7 +52,7 @@ public class Main extends Applet {
 		
 		// Connect to server
 		try {
-			Shared.client.connect(5000, hostname, NetworkStuff.TCP_PORT, NetworkStuff.UDP_PORT);
+			Shared.client.connect(5000, hostname, Global.TCP_PORT, Global.UDP_PORT);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -76,11 +76,11 @@ public class Main extends Applet {
 	
 	public void startGraphics() {
 		if(dbg != null) {
-			NetworkStuff.printErr("Graphics already started!");
+			Global.printErr("Graphics already started!");
 			return;
 		}
 		
-		dbImage = createImage(NetworkStuff.WIDTH, NetworkStuff.HEIGHT);
+		dbImage = createImage(Global.WIDTH, Global.HEIGHT);
 		//dbImage = createImage(Shared.map.getImage().getWidth(null), Shared.map.getImage().getHeight(null));
 		dbg = dbImage.getGraphics();
 	}

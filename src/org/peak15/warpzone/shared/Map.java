@@ -87,7 +87,7 @@ public class Map {
 			HashMap<Integer, Image> tiles = new HashMap<Integer, Image>();
 			
 			// Create the canvas
-			image = new BufferedImage(NetworkStuff.TILE_SIZE * width, NetworkStuff.TILE_SIZE * height, BufferedImage.TYPE_INT_ARGB);
+			image = new BufferedImage(Global.TILE_SIZE * width, Global.TILE_SIZE * height, BufferedImage.TYPE_INT_ARGB);
 			Graphics draw = image.getGraphics();
 			
 			// collision map
@@ -110,13 +110,13 @@ public class Map {
 						
 						// render to canvas
 						Image tile = tiles.get(color);
-						int x = NetworkStuff.TILE_SIZE * i;
-						int y = NetworkStuff.TILE_SIZE * j;
+						int x = Global.TILE_SIZE * i;
+						int y = Global.TILE_SIZE * j;
 						draw.drawImage(tile, x, y, null);
 					}
 					
 					// generate collision map
-					byte[] colByte = NetworkStuff.toBytes(color);
+					byte[] colByte = Global.toBytes(color);
 					if(colByte[0] != 0xffffffff) {
 						// This pixel is at least partially transparent
 						table[i][j] = false;

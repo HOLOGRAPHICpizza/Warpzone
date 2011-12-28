@@ -19,7 +19,7 @@ public class NetFile {
 	    is.close();
 	    
 	    // Compress
-	    cbytes = NetworkStuff.compressBytes(bytes);
+	    cbytes = Global.compressBytes(bytes);
 	}
 	
 	public void write(File file) throws IOException, DataFormatException {
@@ -29,6 +29,6 @@ public class NetFile {
 	}
 	
 	public byte[] getBytes() throws IOException, DataFormatException {
-		return NetworkStuff.extractBytes(cbytes);
+		return Global.extractBytes(cbytes);
 	}
 }

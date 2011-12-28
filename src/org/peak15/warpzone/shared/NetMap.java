@@ -34,8 +34,8 @@ public class NetMap {
 	 * @param map Map to host.
 	 */
 	public NetMap(Map map) {
-		if(NetworkStuff.isClient()) {
-			NetworkStuff.printErr("NetMap constructed from map on client!!");
+		if(Global.isClient()) {
+			Global.printErr("NetMap constructed from map on client!!");
 			System.exit(1);
 		}
 		
@@ -48,7 +48,7 @@ public class NetMap {
 			// start non-blocking map server
 			new MapServer(name, file, table);
 		} catch (Exception e) {
-			NetworkStuff.printErr("Could not construct NetMap.");
+			Global.printErr("Could not construct NetMap.");
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -60,7 +60,7 @@ public class NetMap {
 	 * @param addr Address of the map server.
 	 */
 	public NetMap(InetAddress addr) throws Exception {
-		InetSocketAddress isa = new InetSocketAddress(addr, NetworkStuff.MAP_PORT);
+		InetSocketAddress isa = new InetSocketAddress(addr, Global.MAP_PORT);
 		SocketChannel sc = null;
 		try {
 			// Connect
@@ -95,20 +95,20 @@ public class NetMap {
 			// Get the file
 			// ------------
 			List<ByteBuffer> filePackets = new ArrayList<ByteBuffer>();
-			for(int i=0; i < (fileLen / NetworkStuff.PACKET_SIZE); i++) {
-				ByteBuffer bb = ByteBuffer.allocateDirect(NetworkStuff.PACKET_SIZE);
+			for(int i=0; i < (fileLen / Global.PACKET_SIZE); i++) {
+				ByteBuffer bb = ByteBuffer.allocateDirect(Global.PACKET_SIZE);
 				sc.read(bb);
 				bb.flip();
 				filePackets.add(bb);
 			}
 			// get the last packet
-			ByteBuffer lFPBb = ByteBuffer.allocateDirect(fileLen % NetworkStuff.PACKET_SIZE);
+			ByteBuffer lFPBb = ByteBuffer.allocateDirect(fileLen % Global.PACKET_SIZE);
 			sc.read(lFPBb);
 			lFPBb.flip();
 			filePackets.add(lFPBb);
 			
 			// combine into one byte buffer
-			ByteBuffer fileBuffer = NetworkStuff.combinePackets(filePackets);
+			ByteBuffer fileBuffer = Global.combinePackets(filePackets);
 			
 			// and make our NetFile out of it
 			this.file = new NetFile(new ByteBufferInputStream(fileBuffer), fileLen);
@@ -117,23 +117,23 @@ public class NetMap {
 			// Get the table
 			// -------------
 			List<ByteBuffer> tablePackets = new ArrayList<ByteBuffer>();
-			for(int i=0; i < (tableLen / NetworkStuff.PACKET_SIZE); i++) {
-				ByteBuffer bb = ByteBuffer.allocateDirect(NetworkStuff.PACKET_SIZE);
+			for(int i=0; i < (tableLen / Global.PACKET_SIZE); i++) {
+				ByteBuffer bb = ByteBuffer.allocateDirect(Global.PACKET_SIZE);
 				sc.read(bb);
 				bb.flip();
 				tablePackets.add(bb);
 			}
 			// get the last packet
-			ByteBuffer lTPBb = ByteBuffer.allocateDirect(tableLen % NetworkStuff.PACKET_SIZE);
+			ByteBuffer lTPBb = ByteBuffer.allocateDirect(tableLen % Global.PACKET_SIZE);
 			sc.read(lTPBb);
 			lTPBb.flip();
 			tablePackets.add(lTPBb);
 			
 			// combine into one byte array
-			byte[] tableArray = NetworkStuff.combinePacketsToArray(tablePackets);
+			byte[] tableArray = Global.combinePacketsToArray(tablePackets);
 			
 			// decompress array
-			byte[] tableArrayDC = NetworkStuff.extractBytes(tableArray);
+			byte[] tableArrayDC = Global.extractBytes(tableArray);
 			
 			// convert to byte buffer
 			ByteBuffer tableBuffer = ByteBuffer.allocateDirect(tableArrayDC.length);
@@ -158,7 +158,7 @@ public class NetMap {
 			return new Map(name, image, table);
 		} catch (Exception e) {
 			e.printStackTrace();
-			NetworkStuff.printErr("Failed to read map.");
+			Global.printErr("Failed to read map.");
 			return null;
 		}
 	}

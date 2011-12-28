@@ -11,7 +11,7 @@ import java.net.*;
 import java.util.*;
 
 import org.peak15.warpzone.shared.NetFile;
-import org.peak15.warpzone.shared.NetworkStuff;
+import org.peak15.warpzone.shared.Global;
 
 import com.esotericsoftware.kryo.Kryo;
 
@@ -31,7 +31,7 @@ public class MapServer implements Runnable {
 		kryo.writeObject(tableBb, table);
 		
 		// Compress array
-		MapServer.table = NetworkStuff.compressBytes(tableBb.array());
+		MapServer.table = Global.compressBytes(tableBb.array());
 		
 		Thread t = new Thread(this);
 		t.start();
@@ -47,7 +47,7 @@ public class MapServer implements Runnable {
 		
 		// Bind to local host and port.
 		InetAddress lh = Shared.server.getInetSocket().getAddress();
-		InetSocketAddress isa = new InetSocketAddress(lh, NetworkStuff.MAP_PORT);
+		InetSocketAddress isa = new InetSocketAddress(lh, Global.MAP_PORT);
 		ssc.socket().bind(isa);
 		
 		// Register accepts on the server socket with the selector. This
@@ -103,7 +103,7 @@ public class MapServer implements Runnable {
 				// -------------
 				// split into packets
 				List<byte[]> filePackets = new ArrayList<byte[]>();
-				filePackets = NetworkStuff.toPackets(file);
+				filePackets = Global.toPackets(file);
 				// and send them
 				for(byte[] bt : filePackets) {
 					os.write(bt);
@@ -114,7 +114,7 @@ public class MapServer implements Runnable {
 				// --------------
 				// split into packets
 				List<byte[]> tablePackets = new ArrayList<byte[]>();
-				tablePackets = NetworkStuff.toPackets(table);
+				tablePackets = Global.toPackets(table);
 				// and send them
 				for(byte[] bt : tablePackets) {
 					os.write(bt);
