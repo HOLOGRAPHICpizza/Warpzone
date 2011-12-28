@@ -3,6 +3,7 @@ package org.peak15.warpzone.server;
 import java.util.HashMap;
 import org.peak15.warpzone.shared.*;
 import com.esotericsoftware.kryonet.Server;
+import com.esotericsoftware.minlog.Log;
 
 public class Shared {
 	//TODO: Implement Secure Mode
@@ -19,14 +20,14 @@ public class Shared {
 	
 	// Dummy functions so that client style message printing works on the server. 
 	public static void print(String string) {
-		System.out.println(string);
+		Log.info("warpzone", string);
 	}
 	
 	public static void printDbg(String string) {
-		System.out.println("DEBUG: " + string);
+		Log.debug("warpzone", string);
 	}
 	
 	public static void printErr(String string) {
-		System.err.println(string);
+		Log.error("warpzone", string);
 	}
 }

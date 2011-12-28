@@ -7,6 +7,7 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 import org.peak15.warpzone.shared.*;
 import org.peak15.warpzone.shared.ships.*;
+import com.esotericsoftware.minlog.Log;
 
 public class Main extends Applet {
 	
@@ -21,9 +22,9 @@ public class Main extends Applet {
 		Shared.main = this;
 		this.setSize(NetworkStuff.WIDTH, NetworkStuff.HEIGHT);
 		
-		// Double buffering
-		//dbImage = createImage(NetworkStuff.WIDTH, NetworkStuff.HEIGHT);
-		//dbg = dbImage.getGraphics();
+		if(NetworkStuff.DEBUG) {
+			Log.set(Log.LEVEL_DEBUG);
+		}
 		
 		// Begin background downloading
 		Thread d = new Thread(Shared.resources);

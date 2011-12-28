@@ -3,10 +3,16 @@ package org.peak15.warpzone.server;
 import java.io.IOException;
 import org.peak15.warpzone.shared.*;
 
+import com.esotericsoftware.minlog.Log;
+
 public class Main {
 	
 	public static void main(String[] args) {
 		NetworkStuff.setServer();
+		
+		if(NetworkStuff.DEBUG) {
+			Log.set(Log.LEVEL_DEBUG);
+		}
 		
 		NetworkStuff.print("Warpzone server starting...");
 		

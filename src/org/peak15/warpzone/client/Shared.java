@@ -5,6 +5,8 @@ package org.peak15.warpzone.client;
 import java.awt.Color;
 import java.util.HashMap;
 import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.minlog.Log;
+
 import org.peak15.warpzone.shared.*;
 
 public class Shared {
@@ -33,19 +35,19 @@ public class Shared {
 	
 	// These methods could later be used to print to an in game console instead of stdout, or expanded to support color.
 	public static void print(String string) {
-		System.out.println(string);
+		Log.info("warpzone", string);
 		statusColor = Color.WHITE;
 		status = string;
 	}
 	
 	public static void printDbg(String string) {
-		System.out.println(string);
+		Log.debug("warpzone", string);
 		statusColor = Color.CYAN;
 		status = string;
 	}
 	
 	public static void printErr(String string) {
-		System.err.println(string);
+		Log.error("warpzone", string);
 		statusColor = Color.RED;
 		status = string;
 	}

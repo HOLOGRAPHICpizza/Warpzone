@@ -17,7 +17,6 @@ import java.util.zip.Inflater;
 import org.peak15.warpzone.shared.ships.*;
 import com.esotericsoftware.kryonet.*;
 import com.esotericsoftware.kryo.*;
-import com.esotericsoftware.minlog.Log;
 
 public class NetworkStuff {
 	
@@ -275,10 +274,6 @@ public class NetworkStuff {
 	}
 	
 	private static void reg(Kryo kryo) {
-		if(DEBUG) {
-			Log.set(Log.LEVEL_DEBUG);
-		}
-		
 		kryo.register(JoinRequest.class);
 		kryo.register(Player.class);
 		kryo.register(Vector.class);
