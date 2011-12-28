@@ -66,10 +66,19 @@ public class NetworkStuff {
 	public static final int HEIGHT = 480;
 	public static final int TILE_SIZE = 24;
 	public static final int PACKET_SIZE = 512;
-	public static final String CONTENT_SERVER = "http://www.peak15.org.nyud.net/warpzone/content/";
 	public static final File CACHE_DIR = new File("cache/");
 	
 	public static final Vector CENTER = new Vector( (double) WIDTH/2.0, (double) HEIGHT/2.0);
+	
+	private static final String CONTENT_SERVER_DEBUG = "http://www.peak15.org/warpzone/content/";
+	private static final String CONTENT_SERVER = "http://www.peak15.org.nyud.net/warpzone/content/";
+	
+	public static String getContentServer() {
+		if(DEBUG)
+			return CONTENT_SERVER_DEBUG;
+		else
+			return CONTENT_SERVER;
+	}
 	
 	/**
 	 * Converts a short to a byte table.

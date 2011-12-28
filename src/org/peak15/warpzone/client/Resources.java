@@ -6,6 +6,8 @@
 package org.peak15.warpzone.client;
 
 import java.awt.Image;
+import java.awt.image.RenderedImage;
+import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,16 +21,58 @@ public class Resources implements Runnable {
 	private Map map = null;
 	
 	private Set<String> downloading = new HashSet<String>();
+	private boolean cacheIsCurrent = false;
 	
-	/*public Resources() {
-		// Download from content server by default
-		boolean download = true;
-		
-		// check if local cache exists
-		File cacheDir =
-		
-		// compare serial on content server to serial in local cache
-	}*/
+	public Resources() {
+		try {
+			// check if local cache exists
+			if(NetworkStuff.CACHE_DIR.exists()) {
+				// compare serial on content server to serial in local cache
+				File serial = new File(NetworkStuff.CACHE_DIR, "serial");
+				if(serial.exists()) {
+					BufferedReader localIn = new BufferedReader(new InputStreamReader(new FileInputStream(serial)));
+					String localSerial = localIn.readLine();
+					localIn.close();
+					
+					URL serialUrl = new URL(NetworkStuff.getContentServer() + "serial");
+					BufferedReader remoteIn = new BufferedReader(new InputStreamReader(serialUrl.openStream()));
+					String remoteSerial = remoteIn.readLine();
+					remoteIn.close();
+					
+					NetworkStuff.printDbg("Local content serial: " + localSerial);
+					NetworkStuff.printDbg("Remote content serial: " + remoteSerial);
+					
+					if(localSerial != null && remoteSerial != null && localSerial.equals(remoteSerial)) {
+						// This is the only case where we can say the cache is current.
+						cacheIsCurrent = true;
+						NetworkStuff.print("Local cache is up to date, prefering it to content server...");
+						return;
+					}
+				}
+			}
+			
+			// Create local cache dir if it does not exist
+			if(!NetworkStuff.CACHE_DIR.exists()) {
+				NetworkStuff.CACHE_DIR.mkdir();
+			}
+			
+			// Overwrite or create local serial file
+			URL serialUrl = new URL(NetworkStuff.getContentServer() + "serial");
+			BufferedReader remoteIn = new BufferedReader(new InputStreamReader(serialUrl.openStream()));
+			String remoteSerial = remoteIn.readLine();
+			remoteIn.close();
+			
+			File serial = new File(NetworkStuff.CACHE_DIR, "serial");
+			BufferedWriter serialOut = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(serial)));
+			serialOut.write(remoteSerial);
+			serialOut.close();
+			
+		} catch(Exception e) {
+			NetworkStuff.printErr("Failed to start resource handler!");
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
 	
 	// Begin downloading crap
 	@Override
@@ -44,41 +88,73 @@ public class Resources implements Runnable {
 	 * @return Image retrieved.
 	 */
 	public Image getImage(String filename) {
-		// This has been downloaded.
+		// Loaded in memory?
 		if(images.containsKey(filename) && images.get(filename) != null) {
 			return images.get(filename);
 		}
-		else {
-			// Is it currently downloading?
-			if(downloading.contains(filename)) {
-				// Wait for it to finish
-				while(downloading.contains(filename)) {
-					// Sleep a bit
-					try {
-						Thread.sleep(10);
-					}
-					catch(InterruptedException e) {}
-				}
-				return getImage(filename);
-			}
-			else {
-				downloading.add(filename);
-				
-				// download it
+		
+		// Currently downloading?
+		else if(downloading.contains(filename)) {
+			// Wait for it to finish
+			while(downloading.contains(filename)) {
+				// Sleep a bit
 				try {
-					NetworkStuff.printDbg("Dowloading " + filename);
-					Image img = javax.imageio.ImageIO.read(new URL(NetworkStuff.CONTENT_SERVER + filename));
-					images.put(filename, img);
-					downloading.remove(filename);
-					return img;
-				} catch (Exception e) {
-					NetworkStuff.printErr("Failed to grab " + filename + " from content server.");
-					e.printStackTrace();
-					downloading.remove(filename);
-					return null;
+					Thread.sleep(10);
 				}
+				catch(InterruptedException e) {}
+			}
+			return getImage(filename);
+		}
+		
+		// In local cache?
+		else if(cacheIsCurrent && isInCache(filename)) {
+			downloading.add(filename);
+			
+			try {
+				NetworkStuff.printDbg("Grabbing " + filename + " from local cache.");
+				Image img = javax.imageio.ImageIO.read(new File(NetworkStuff.CACHE_DIR, filename));
+				images.put(filename, img);
+				downloading.remove(filename);
+				return img;
+			} catch (Exception e) {
+				NetworkStuff.printErr("Failed to grab " + filename + " from local cache.");
+				e.printStackTrace();
+				downloading.remove(filename);
+				return null;
 			}
 		}
+		
+		// We must download it.
+		else {
+			downloading.add(filename);
+			
+			try {
+				NetworkStuff.printDbg("Dowloading " + filename);
+				Image img = javax.imageio.ImageIO.read(new URL(NetworkStuff.getContentServer() + filename));
+				images.put(filename, img);
+				downloading.remove(filename);
+				
+				// Save to local cache
+				File cacheFile = new File(NetworkStuff.CACHE_DIR, filename);
+				if(!cacheFile.getParentFile().exists()) {
+					// create parent dir if it does not exist
+					cacheFile.getParentFile().mkdirs();
+				}
+				javax.imageio.ImageIO.write((RenderedImage) img, "png", cacheFile);
+				
+				return img;
+			} catch (Exception e) {
+				NetworkStuff.printErr("Failed to grab " + filename + " from content server.");
+				e.printStackTrace();
+				downloading.remove(filename);
+				return null;
+			}
+		}
+	}
+	
+	private boolean isInCache(String filename) {
+		File file = new File(NetworkStuff.CACHE_DIR, filename);
+		return file.exists();
 	}
 	
 	/**
